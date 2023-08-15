@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+
 import requests
 
 
@@ -50,6 +51,24 @@ class HttpClient:
         response = self.execute_json_command("gp/gpControl/status")
 
         return GoProStatus(battery_available=response["status"]["1"], remaining_space=response["status"]["54"])
+
+    def shutdown_camera(self):
+        """
+        Sends camera into sleep mode
+        """
+        self.execute_json_command("gp/gpControl/command/system/sleep")
+
+    def enable_beeping(self):
+        """
+        Enable 'locate' mode that causes the camera to scream. Loud!
+        """
+        self.execute_json_command("gp/gpControl/command/system/locate?p=1")
+
+    def disable_beeping(self):
+        """
+        Disable 'locate' mode
+        """
+        self.execute_json_command("gp/gpControl/command/system/locate?p=0")
 
 
 client = HttpClient("10.5.5.9", 8080)
