@@ -1,0 +1,57 @@
+from dataclasses import dataclass
+import requests
+
+
+class RequestFailedException(Exception):
+    def __init__(self, response: requests.Response):
+        super().__init__(f"Request {response.request.url} returned {response}")
+
+
+@dataclass
+class GoProStatus:
+    battery_available: bool
+    remaining_space: int  # Value in bytes
+
+
+class HttpClient:
+    """
+    HTTP client interfacing with GoPro's API.
+    All magic values are documented in https://github.com/KonradIT/goprowifihack
+    and should be more-or-less compatible for GoPro 4 up to GoPro 8.
+    """
+
+    RESPONSE_OK = 200
+
+    def __init__(self, ip_address: str, port: int):
+        """
+        Construct connection-capable HTTP client
+        :param ip_address: Address of GoPro camera. Most common value is 10.5.5.9
+        :param port: Port that exposes GoPro's api. Most common value is 8080
+        """
+        self.ip_address = ip_address
+        self.port = port
+
+    def execute_json_command(self, api_command: str) -> dict:
+        """
+        Send the request and return the
+        :param api_command: API request string
+        :return: JSON response if successful, exception is thrown otherwise
+        """
+        response = requests.get(f"http://{self.ip_address}:{self.port}/{api_command}", timeout=2)
+        if response.status_code is not self.RESPONSE_OK:
+            raise RequestFailedException(response)
+        return response.json()
+
+    def get_gopro_status(self) -> GoProStatus:
+        """
+        Get GoPro status with basic information. Use this as healthcheck and/or heartbeat command
+        :return: GoPro status info
+        """
+        response = self.execute_json_command("gp/gpControl/status")
+
+        return GoProStatus(battery_available=response["status"]["1"], remaining_space=response["status"]["54"])
+
+
+client = HttpClient("10.5.5.9", 8080)
+
+gopro_status = client.get_gopro_status()
