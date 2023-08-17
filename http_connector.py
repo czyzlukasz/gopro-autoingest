@@ -1,7 +1,10 @@
+import logging
+
 import requests
+from typing import List
 from dataclasses import dataclass
 
-from file_management import parse_media_list
+from file_management import parse_media_list, VideoInfo
 from video_downloader import download_video
 
 
@@ -72,14 +75,6 @@ class HttpClient:
         """
         self.execute_json_command("gp/gpControl/command/system/locate?p=0")
 
-    def get_video_info(self):
+    def get_video_info(self) -> List[VideoInfo]:
         response = self.execute_json_command("gp/gpMediaList")
         return parse_media_list(response["media"])
-
-
-client = HttpClient("10.5.5.9", 8080)
-
-gopro_status = client.get_gopro_status()
-video_info = client.get_video_info()
-print(video_info)
-download_video("10.5.5.9", 8080, video_info[0], "./movie")
