@@ -26,7 +26,8 @@ def download_video(ip_address: str, port: int, video: VideoInfo, destination_pat
     :param destination_path: Path to the destination directory where downloaded video will be stored
     """
     makedirs(destination_path, exist_ok=True)
-    logging.info(f"Downloading {len(video.chapters)} chapters to {destination_path}")
+    logging.info(f"Downloading {len(video.chapters)} chapters of video {video.video_number} to {destination_path}")
     for idx, chapter in enumerate(video.chapters):
         logging.info(f"Downloading chapter #{idx + 1} {chapter.file_name} ({chapter.file_size / 1e6:.1f}MB)")
         download_chapter(ip_address, port, chapter, f"{destination_path}/{idx}.mp4")
+    logging.info(f"Downloaded video {video.video_number}")
