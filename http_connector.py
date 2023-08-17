@@ -2,6 +2,8 @@ import requests
 from dataclasses import dataclass
 
 from file_management import parse_media_list
+from video_downloader import download_video
+
 
 class RequestFailedException(Exception):
     def __init__(self, response: requests.Response):
@@ -74,8 +76,10 @@ class HttpClient:
         response = self.execute_json_command("gp/gpMediaList")
         return parse_media_list(response["media"])
 
+
 client = HttpClient("10.5.5.9", 8080)
 
 gopro_status = client.get_gopro_status()
 video_info = client.get_video_info()
 print(video_info)
+download_video("10.5.5.9", 8080, video_info[0], "./movie")
