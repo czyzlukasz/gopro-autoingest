@@ -1,5 +1,5 @@
 import logging
-import multiprocessing
+import threading
 from typing import List
 
 from file_management import VideoInfo
@@ -24,25 +24,21 @@ class VideoIngester:
 
         :param videos: List of videos to download and process
         """
-        processes = []
+        threads = []
 
         for video in videos:
             download_path = f"./tmp/video/{video.video_number}"
 
             # Step 1: Download
-            download_process = multiprocessing.Process(
+            download_thread = threading.Thread(
                 target=download_video, args=(self.ip_address, self.port, video, download_path))
-            processes.append(download_process)
-            download_process.start()
-            download_process.join()
-
-            if download_process.exitcode != 0:
-                logging.warning(f"Downloading failed: {download_process.exitcode}. Skipping video processing")
-                continue
+            threads.append(download_thread)
+            download_thread.start()
+            download_thread.join()
 
             # Step 2: Process
-            process_process = multiprocessing.Process(target=process_video, args=(download_path,))
-            processes.append(process_process)
-            process_process.start()
+            process_thread = threading.Thread(target=process_video, args=(download_path,))
+            threads.append(process_thread)
+            process_thread.start()
 
-        [process.join() for process in processes]
+        [thread.join() for thread in threads]
