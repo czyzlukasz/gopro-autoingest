@@ -1,11 +1,9 @@
-import logging
-
 import requests
 from typing import List
 from dataclasses import dataclass
 
+import ingest_config
 from file_management import parse_media_list, VideoInfo
-from video_downloader import download_video
 
 
 class RequestFailedException(Exception):
@@ -28,22 +26,13 @@ class HttpClient:
 
     RESPONSE_OK = 200
 
-    def __init__(self, ip_address: str, port: int):
-        """
-        Construct connection-capable HTTP client
-        :param ip_address: Address of GoPro camera. Most common value is 10.5.5.9
-        :param port: Port that exposes GoPro's api. Most common value is 8080
-        """
-        self.ip_address = ip_address
-        self.port = port
-
     def execute_json_command(self, api_command: str) -> dict:
         """
         Send the request and return the
         :param api_command: API request string
         :return: JSON response if successful, exception is thrown otherwise
         """
-        response = requests.get(f"http://{self.ip_address}:{self.port}/{api_command}", timeout=2)
+        response = requests.get(f"http://{ingest_config.GOPRO_IP}:{ingest_config.GOPRO_PORT}/{api_command}", timeout=2)
         if response.status_code is not self.RESPONSE_OK:
             raise RequestFailedException(response)
         return response.json()

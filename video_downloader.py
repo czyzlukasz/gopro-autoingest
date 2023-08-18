@@ -1,10 +1,12 @@
 import logging
 import wget
 from os import makedirs
+
+import ingest_config
 from file_management import VideoInfo, ChapterInfo
 
 
-def download_chapter(ip_address: str, port: int, chapter: ChapterInfo, destination_path: str):
+def download_chapter(chapter: ChapterInfo, destination_path: str):
     """
     Download single file from GoPro
     :param ip_address: Address of GoPro camera. Most common value is 10.5.5.9
@@ -12,11 +14,11 @@ def download_chapter(ip_address: str, port: int, chapter: ChapterInfo, destinati
     :param chapter: Valid ChapterInfo object
     :param destination_path: Path to the destination file where downloaded chapter will be stored
     """
-    full_address = f"http://{ip_address}:{port}/videos/DCIM/{chapter.parent_directory}/{chapter.file_name}"
+    full_address = f"http://{ingest_config.GOPRO_IP}:{ingest_config.GOPRO_PORT}/videos/DCIM/{chapter.parent_directory}/{chapter.file_name}"
     wget.download(full_address, destination_path)
 
 
-def download_video(ip_address: str, port: int, video: VideoInfo, destination_path: str):
+def download_video(video: VideoInfo, destination_path: str):
     """
     Download single video consisting of multiple chapters.
     Chapters will be stored in specified destination directory with chapters saved as destination_path/chapter_number.mp4
@@ -29,5 +31,5 @@ def download_video(ip_address: str, port: int, video: VideoInfo, destination_pat
     logging.info(f"Downloading {len(video.chapters)} chapters of video {video.video_number} to {destination_path}")
     for idx, chapter in enumerate(video.chapters):
         logging.info(f"Downloading chapter #{idx + 1} {chapter.file_name} ({chapter.file_size / 1e6:.1f}MB)")
-        download_chapter(ip_address, port, chapter, f"{destination_path}/{idx}.mp4")
+        download_chapter(chapter, f"{destination_path}/{idx}.mp4")
     logging.info(f"Downloaded video {video.video_number}")
