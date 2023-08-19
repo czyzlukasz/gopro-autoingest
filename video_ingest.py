@@ -1,6 +1,5 @@
 import concurrent.futures
 import logging
-import threading
 from typing import List
 
 from file_management import VideoInfo
@@ -14,8 +13,8 @@ class VideoIngester:
         self.process_pool = concurrent.futures.ThreadPoolExecutor(1)
 
     @staticmethod
-    def get_download_path(video: VideoInfo):
-        return f"{ingest_config.DOWNLOAD_DIR}/{video.video_number}"
+    def get_staging_path(video: VideoInfo) -> str:
+        return f"{ingest_config.STAGING_DIR}/{video.video_number}"
 
     def main_loop(self, videos: List[VideoInfo]):
         """
@@ -24,9 +23,14 @@ class VideoIngester:
         :param videos: List of videos to download and process
         """
 
+        process_future = None
         for video in videos:
-            download_path = VideoIngester.get_download_path(video)
-            if not download_video(video, download_path):
+            staging_path = VideoIngester.get_staging_path(video)
+            if not download_video(video, staging_path):
                 logging.warning("Skipping video processing due to the download failure")
                 continue
-            self.process_pool.submit(process_video, download_path)
+            process_future = self.process_pool.submit(process_video, staging_path)
+
+        # Wait for lass processing thread to finish
+        if process_future is not None:
+            process_future.result()
