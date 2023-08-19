@@ -1,5 +1,6 @@
 import concurrent.futures
 import logging
+import os
 from shutil import rmtree as rm_rf
 from typing import List
 
@@ -22,6 +23,13 @@ class VideoIngester:
         if process_video(staging_path):
             self.successfully_processed_videos.append(video)
 
+    def check_for_stranded_videos_in_staging(self):
+        stranded_videos = os.listdir(ingest_config.STAGING_DIR)
+        if stranded_videos:
+            logger = logging.getLogger()
+            # TODO: do something about that (like add an option to do that manually or something like that)
+            logger.warning(f"Stranded videos found in staging area! Following videos are still here: {stranded_videos}")
+
     def remove_processed_videos_from_staging(self):
         logger = logging.getLogger()
 
@@ -33,6 +41,8 @@ class VideoIngester:
             logger.debug(f"Calling rm -rf on {staging_path}")
             # TODO: uncomment that when ready
             # rm_rf(staging_path)
+
+        self.check_for_stranded_videos_in_staging()
 
     def main_loop(self, videos: List[VideoInfo]):
         """
