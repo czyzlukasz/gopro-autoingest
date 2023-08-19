@@ -4,8 +4,18 @@ import ingest_config
 from http_connector import HttpClient
 from video_ingest import VideoIngester
 
-if __name__ == '__main__':
+
+def setup_logging():
     logging.basicConfig(level=ingest_config.LOGGING_LEVEL)
+    logger = logging.getLogger()
+    handler = logging.FileHandler('./log.log', 'w+')
+
+    handler.setFormatter(logging.Formatter(fmt='%(asctime)s|%(levelname)s: %(message)s'))
+    logger.addHandler(handler)
+
+
+if __name__ == '__main__':
+    setup_logging()
 
     client = HttpClient()
     video_info = client.get_video_info()

@@ -23,11 +23,12 @@ class VideoIngester:
         :param videos: List of videos to download and process
         """
 
+        logger = logging.getLogger()
         process_future = None
         for video in videos:
             staging_path = VideoIngester.get_staging_path(video)
             if not download_video(video, staging_path):
-                logging.warning("Skipping video processing due to the download failure")
+                logger.warning("Skipping video processing due to the download failure")
                 continue
             process_future = self.process_pool.submit(process_video, staging_path)
 

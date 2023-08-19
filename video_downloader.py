@@ -31,11 +31,12 @@ def download_video(video: VideoInfo, destination_path: str) -> bool:
     :return: True if video was downloaded successfully, false otherwise
     """
 
-    logging.info(f"Downloading {len(video.chapters)} chapters of video {video.video_number} to {destination_path}")
+    logger = logging.getLogger()
+    logger.info(f"Downloading {len(video.chapters)} chapters of video {video.video_number} to {destination_path}")
 
     makedirs(destination_path, exist_ok=True)
     for idx, chapter in enumerate(video.chapters):
-        logging.info(f"Downloading chapter #{idx + 1} {chapter.file_name} ({chapter.file_size / 1e6:.1f}MB)")
+        logger.info(f"Downloading chapter #{idx + 1} {chapter.file_name} ({chapter.file_size / 1e6:.1f}MB)")
 
         # Calculate time required to download a chapter based on minimal expected download speed
         # Note that minimal value here is for miscellaneous procedures (setting up the connection etc.)
@@ -46,8 +47,8 @@ def download_video(video: VideoInfo, destination_path: str) -> bool:
         download_thread.join(download_timeout)
         # Apparently this is a way to check if thread timed out
         if download_thread.is_alive():
-            logging.warning(f"Downloading chapter failed: timeout ({download_timeout}s)")
+            logger.warning(f"Downloading chapter failed: timeout ({download_timeout}s)")
             return False
 
-    logging.info(f"Downloaded video {video.video_number}")
+    logger.info(f"Downloaded video {video.video_number}")
     return True
