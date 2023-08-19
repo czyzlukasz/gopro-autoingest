@@ -32,6 +32,7 @@ def concatenate_chapters(download_path: str, chapters: List[ChapterInfo]):
     :param chapters: List of chapters to concatenate
     :return: Concatenated stream
     """
+    raise NotImplementedError()
     chapter_file_list = [ffmpeg.input(f"{download_path}/{chapter.file_name}") for chapter in chapters]
     return ffmpeg.concat(*chapter_file_list)
 
@@ -51,10 +52,8 @@ def process_video(download_path: str, video_info: VideoInfo) -> bool:
     logger.info(f"Processing video {video_info.video_number} to {output_file_name}")
 
     try:
-        chapter_stream = concatenate_chapters(download_path, video_info.chapters)
-        # TODO: add downscaling, if necessary. For now rendering with different CRF seems enough
-        output_stream = ffmpeg.output(chapter_stream, output_file_name, vcodec='libx265',
-                                      crf=ingest_config.OUTPUT_VIDEO_CRF)
+        chapter_file_list = [ffmpeg.input(f"{download_path}/{chapter.file_name}") for chapter in video_info.chapters]
+        output_stream = ffmpeg.output(*chapter_file_list, output_file_name, vcodec='copy', acodec='copy')
         # Force overwriting destination file. This should not happen, but it prevents from being stuck indefinitely
         output_stream = output_stream.global_args("-y")
         output_stream.run()
