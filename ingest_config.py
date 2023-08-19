@@ -7,7 +7,8 @@ LOWEST_DOWNLOAD_SPEED_MBYTES_PER_SECOND: float = int(getenv("LOWEST_DOWNLOAD_SPE
 LOG_FILE: str = getenv("LOG_FILE", "./log.log")
 LOGGING_LEVEL: str = getenv("LOGGING_LEVEL", "DEBUG")
 
-DOWNLOAD_DIR: str = getenv("DOWNLOAD_DIR", "./tmp")
-STAGING_DIR: str = getenv("STAGING_DIR", "./tmp/staging")
+STAGING_DIR: str = getenv("STAGING_DIR", "tmp/staging")
+STORAGE_DIR: str = getenv("STORAGE_DIR", "./tmp/output")
 
 OUTPUT_VIDEO_CRF: int = int(getenv("OUTPUT_VIDEO_CRF", "30"))
+OUTPUT_VIDEO_NAME_FORMAT: str = getenv("OUTPUT_VIDEO_NAME", "%m.%d.%Y %H%M")
