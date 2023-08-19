@@ -8,7 +8,7 @@ from video_ingest import VideoIngester
 def setup_logging():
     logging.basicConfig(level=ingest_config.LOGGING_LEVEL)
     logger = logging.getLogger()
-    handler = logging.FileHandler('./log.log', 'w+')
+    handler = logging.FileHandler(ingest_config.LOG_FILE, 'w+')
 
     handler.setFormatter(logging.Formatter(fmt='%(asctime)s|%(levelname)s: %(message)s'))
     logger.addHandler(handler)
