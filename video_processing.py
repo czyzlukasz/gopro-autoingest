@@ -13,7 +13,8 @@ def concatenate_chapters(download_path: str, chapters: List[ChapterInfo]):
 
 def process_video(video_path: str, video_info: VideoInfo):
     """Mock function for testing purposes"""
-    logging.info(f"Processing video {video_info.video_number}")
+    logger = logging.getLogger()
+    logger.info(f"Processing video {video_info.video_number}")
     chapter_stream = concatenate_chapters(video_path, video_info.chapters)
     # TODO: add downscaling, if necessary. For now rendering with different CRF seems enough
     output_stream = ffmpeg.output(chapter_stream, "out.mp4", vcodec='libx265', crf=ingest_config.OUTPUT_VIDEO_CRF)
@@ -22,8 +23,8 @@ def process_video(video_path: str, video_info: VideoInfo):
     try:
         output_stream.run()
     except ffmpeg.Error as exception:
-        print(f"Failed to process video: {type(exception)} {exception}")
+        logger.error(f"Failed to process video: {type(exception)} {exception}")
         return False
     else:
-        logging.info(f"Finished processing video {video_info.video_number}")
+        logger.info(f"Finished processing video {video_info.video_number}")
         return True
