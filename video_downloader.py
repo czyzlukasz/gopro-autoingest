@@ -42,7 +42,8 @@ def download_video(video: VideoInfo, destination_path: str) -> bool:
         # Note that minimal value here is for miscellaneous procedures (setting up the connection etc.)
         download_timeout = max(chapter.file_size / (ingest_config.LOWEST_DOWNLOAD_SPEED_MBYTES_PER_SECOND * 1e6), 5)
 
-        download_thread = threading.Thread(target=download_chapter, args=(chapter, f"{destination_path}/{idx}.mp4"))
+        download_thread = threading.Thread(target=download_chapter,
+                                           args=(chapter, f"{destination_path}/{chapter.file_name}"))
         download_thread.start()
         download_thread.join(download_timeout)
         # Apparently this is a way to check if thread timed out

@@ -20,7 +20,7 @@ class VideoIngester:
         return f"{ingest_config.STAGING_DIR}/{video.video_number}"
 
     def process_video(self, video: VideoInfo, staging_path: str):
-        if process_video(staging_path):
+        if process_video(staging_path, video):
             self.successfully_processed_videos.append(video)
 
     def check_for_stranded_videos_in_staging(self):

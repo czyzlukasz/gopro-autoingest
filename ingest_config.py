@@ -9,3 +9,5 @@ LOGGING_LEVEL: str = getenv("LOGGING_LEVEL", "DEBUG")
 
 DOWNLOAD_DIR: str = getenv("DOWNLOAD_DIR", "./tmp")
 STAGING_DIR: str = getenv("STAGING_DIR", "./tmp/staging")
+
+OUTPUT_VIDEO_CRF: int = int(getenv("OUTPUT_VIDEO_CRF", "30"))
