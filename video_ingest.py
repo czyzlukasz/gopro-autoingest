@@ -1,3 +1,4 @@
+import concurrent.futures
 import threading
 from typing import List
 
@@ -7,7 +8,38 @@ from video_downloader import download_video
 import ingest_config
 
 
+class ThreadWithReturnValue(threading.Thread):
+
+    def __init__(self, group=None, target=None, name=None,
+                 args=(), kwargs=None):
+        threading.Thread.__init__(self, group, target, name, args, kwargs)
+        self._return: bool = None
+
+    def run(self):
+        if self._target is not None:
+            self._return = self._target(*self._args,
+                                        **self._kwargs)
+
+    def join(self, *args) -> bool:
+        threading.Thread.join(self, *args)
+        return self._return
+
+
 class VideoIngester:
+    def __init__(self):
+        self.process_pool = concurrent.futures.ThreadPoolExecutor(1)
+
+    @staticmethod
+    def get_download_path(video: VideoInfo):
+        return f"{ingest_config.DOWNLOAD_DIR}/{video.video_number}"
+
+    @staticmethod
+    def download_video(video: VideoInfo) -> bool:
+        download_path = VideoIngester.get_download_path(video)
+        download_thread = ThreadWithReturnValue(target=download_video, args=(video, download_path))
+        download_thread.start()
+        return download_thread.join()
+
     def main_loop(self, videos: List[VideoInfo]):
         """
         Main worker loop that downloads and processes the videos concurrently.
@@ -15,21 +47,7 @@ class VideoIngester:
 
         :param videos: List of videos to download and process
         """
-        threads = []
 
         for video in videos:
-            download_path = f"{ingest_config.DOWNLOAD_DIR}/{video.video_number}"
-
-            # Step 1: Download
-            download_thread = threading.Thread(
-                target=download_video, args=(video, download_path))
-            threads.append(download_thread)
-            download_thread.start()
-            download_thread.join(ingest_config.VIDEO_DOWNLOAD_TIMEOUT)
-
-            # Step 2: Process
-            process_thread = threading.Thread(target=process_video, args=(download_path,))
-            threads.append(process_thread)
-            process_thread.start()
-
-        [thread.join() for thread in threads]
+            print(self.download_video(video))
+            self.process_pool.submit(process_video, VideoIngester.get_download_path(video))

@@ -27,9 +27,17 @@ def download_video(video: VideoInfo, destination_path: str):
     :param video: Valid VideoInfo object
     :param destination_path: Path to the destination directory where downloaded video will be stored
     """
-    makedirs(destination_path, exist_ok=True)
-    logging.info(f"Downloading {len(video.chapters)} chapters of video {video.video_number} to {destination_path}")
-    for idx, chapter in enumerate(video.chapters):
-        logging.info(f"Downloading chapter #{idx + 1} {chapter.file_name} ({chapter.file_size / 1e6:.1f}MB)")
-        download_chapter(chapter, f"{destination_path}/{idx}.mp4")
-    logging.info(f"Downloaded video {video.video_number}")
+    try:
+        logging.info(f"Downloading {len(video.chapters)} chapters of video {video.video_number} to {destination_path}")
+
+        makedirs(destination_path, exist_ok=True)
+        for idx, chapter in enumerate(video.chapters):
+            logging.info(f"Downloading chapter #{idx + 1} {chapter.file_name} ({chapter.file_size / 1e6:.1f}MB)")
+            download_chapter(chapter, f"{destination_path}/{idx}.mp4")
+
+        logging.info(f"Downloaded video {video.video_number}")
+    except Exception as exception:
+        logging.warning(f"Download failed: {type(exception)}: {exception}")
+        return False
+    else:
+        return True
