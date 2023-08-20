@@ -1,23 +1,21 @@
-import logging
+import argparse
 
-import ingest_config
-from http_connector import HttpClient
-from video_ingest import VideoIngester
+import ingest_routines
 
-
-def setup_logging():
-    logging.basicConfig(level=ingest_config.LOGGING_LEVEL)
-    logger = logging.getLogger()
-    handler = logging.FileHandler(ingest_config.LOG_FILE, 'w+')
-
-    handler.setFormatter(logging.Formatter(fmt='%(asctime)s|%(levelname)s: %(message)s'))
-    logger.addHandler(handler)
-
+FUNCTION_MAP = {
+    'download': ingest_routines.download_videos,
+    'process': ingest_routines.process_videos,
+    'archive': ingest_routines.archive_video,
+}
 
 if __name__ == '__main__':
-    setup_logging()
+    ingest_routines.setup_logging()
+    ingest_routines.log_parameters()
 
-    client = HttpClient()
-    video_info = client.get_video_info()
-    video_ingester = VideoIngester()
-    video_ingester.main_loop(video_info[1:4])
+    parser = argparse.ArgumentParser(
+        prog='GoPro Auto-ingest',
+        description='Automatically upload GoPro footage to a destination of Your choice')
+    parser.add_argument('command', choices=FUNCTION_MAP)
+    args = parser.parse_args()
+
+    FUNCTION_MAP[args.command]()
