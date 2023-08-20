@@ -1,7 +1,7 @@
 import logging
 import wget
 import threading
-from os import makedirs
+from os import makedirs, path
 
 import ingest_config
 from file_management import VideoInfo, ChapterInfo
@@ -15,6 +15,8 @@ def download_chapter(chapter: ChapterInfo, destination_path: str):
     :param chapter: Valid ChapterInfo object
     :param destination_path: Path to the destination file where downloaded chapter will be stored
     """
+    if path.isfile(destination_path):
+        return
     full_address = f"http://{ingest_config.GOPRO_IP}:{ingest_config.GOPRO_PORT}/videos/DCIM/{chapter.parent_directory}/{chapter.file_name}"
     wget.download(full_address, destination_path)
 
