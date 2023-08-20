@@ -30,6 +30,7 @@ def log_parameters():
     logger.debug(f"GOPRO_IP: {ingest_config.GOPRO_IP}")
     logger.debug(f"GOPRO_PORT: {ingest_config.GOPRO_PORT}")
     logger.debug(f"LOWEST_DOWNLOAD_SPEED_MBYTES_PER_SECOND: {ingest_config.LOWEST_DOWNLOAD_SPEED_MBYTES_PER_SECOND}")
+    logger.debug(f"ENABLE_CONNECTION_CONFIRMATION_BEEP: {ingest_config.ENABLE_CONNECTION_CONFIRMATION_BEEP}")
     logger.debug(f"LOG_FILE: {ingest_config.LOG_FILE}")
     logger.debug(f"LOGGING_LEVEL: {ingest_config.LOGGING_LEVEL}")
     logger.debug(f"STAGING_DIR: {ingest_config.STAGING_DIR}")
