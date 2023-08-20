@@ -67,3 +67,8 @@ class HttpClient:
     def get_video_info(self) -> List[VideoInfo]:
         response = self.execute_json_command("gp/gpMediaList")
         return parse_media_list(response["media"])
+
+    def delete_video(self, video: VideoInfo):
+        for chapter in video.chapters:
+            path_to_file = f"{chapter.parent_directory}/{chapter.file_name}"
+            self.execute_json_command(f"gp/gpControl/command/storage/delete?p=/{path_to_file}")

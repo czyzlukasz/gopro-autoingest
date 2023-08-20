@@ -1,8 +1,15 @@
 import datetime
 import logging
 from os import makedirs
+from time import sleep
+from typing import List
+from shutil import rmtree as rm_rf
 
 import ingest_config
+from file_management import VideoInfo, get_video_info_from_staging
+from http_connector import HttpClient, RequestFailedException
+from video_downloader import download_video
+from video_processing import process_video
 
 
 def setup_logging():
@@ -31,15 +38,58 @@ def log_parameters():
 
 
 def download_videos():
-    raise NotImplementedError
+    logger = logging.getLogger()
+    client = HttpClient()
+
+    try:
+        client.get_gopro_status()
+        videos = client.get_video_info()[1:3]
+
+        if ingest_config.ENABLE_CONNECTION_CONFIRMATION_BEEP:
+            client.enable_beeping()
+            sleep(5)
+            client.disable_beeping()
+    except RequestFailedException:
+        return
+
+    for video in videos:
+        staging_path = f"{ingest_config.STAGING_DIR}/{video.video_number}"
+        successful = download_video(video, staging_path)
+        if successful:
+            logger.debug(f"Removing video {video.video_number} from camera")
+            # client.delete_video(video)
+        else:
+            logger.warning("Skipping video processing due to the download failure")
+
+    logger.info("Switching off camera")
+    # client.shutdown_camera()
 
 
 def process_videos():
-    raise NotImplementedError
+    logger = logging.getLogger()
+
+    videos = get_video_info_from_staging()
+    logger.info(f"Found {len(videos)} videos in staging area")
+
+    successfully_processed_videos: List[VideoInfo] = []
+    for video in videos:
+        download_path = f"{ingest_config.STAGING_DIR}/{video.video_number}"
+        successful = process_video(download_path, video)
+        if successful:
+            successfully_processed_videos.append(video)
+
+    remove_processed_videos(successfully_processed_videos)
 
 
-def remove_processed_videos():
-    raise NotImplementedError
+def remove_processed_videos(successfully_processed_videos: List[VideoInfo]):
+    logger = logging.getLogger()
+
+    logger.info(f"Successfully processed {len(successfully_processed_videos)} videos. Removing them from staging area")
+    for video in successfully_processed_videos:
+        staging_path = f"{ingest_config.STAGING_DIR}/{video.video_number}"
+        logger.debug(f"Calling rm -rf on {staging_path}")
+        # TODO: uncomment that when ready
+        rm_rf(staging_path)
 
 
 def archive_video():

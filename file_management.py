@@ -1,8 +1,13 @@
+import glob
+import logging
+import os
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from typing import List
 from collections import defaultdict
 import datetime
+
+import ingest_config
 
 
 @dataclass_json
@@ -92,4 +97,18 @@ def parse_media_list(media_list: List[dict]) -> List[VideoInfo]:
         )
         result.append(video_info)
 
+    return result
+
+
+def get_video_info_from_staging() -> List[VideoInfo]:
+    """
+    Fetch all staged videos that contain video_info.json file and parse them to VideoInfo
+    :return: List of VideoInfo found
+    """
+    result: List[VideoInfo] = []
+    video_info_paths = glob.glob(f"{ingest_config.STAGING_DIR}/*[1000-9999]/video_info.json")
+    for video_info_path in video_info_paths:
+        with open(video_info_path, "r") as video_info_file:
+            video_info = VideoInfo.from_json(video_info_file.read())
+            result.append(video_info)
     return result
