@@ -1,9 +1,11 @@
 from dataclasses import dataclass
+from dataclasses_json import dataclass_json
 from typing import List
 from collections import defaultdict
 import datetime
 
 
+@dataclass_json
 @dataclass
 class ChapterInfo:
     parent_directory: str
@@ -13,6 +15,7 @@ class ChapterInfo:
     file_size: int
 
 
+@dataclass_json
 @dataclass
 class VideoInfo:
     video_number: int

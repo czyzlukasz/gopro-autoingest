@@ -7,6 +7,16 @@ import ingest_config
 from file_management import VideoInfo, ChapterInfo
 
 
+def save_video_info_to_file(video: VideoInfo, destination_path: str):
+    """
+    Store video metadata to the file
+    :param video: Valid VideoInfo object
+    :param destination_path: Directory where video info will be stored
+    """
+    with open(f"{destination_path}/video_info.json", "w+") as file:
+        file.write(video.to_json())
+
+
 def download_chapter(chapter: ChapterInfo, destination_path: str):
     """
     Download single file from GoPro
@@ -56,5 +66,6 @@ def download_video(video: VideoInfo, destination_path: str) -> bool:
             logger.warning(f"Downloading chapter failed: timeout ({download_timeout}s)")
             return False
 
+    save_video_info_to_file(video, destination_path)
     logger.info(f"Downloaded video {video.video_number}")
     return True
