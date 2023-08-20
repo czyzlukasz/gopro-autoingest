@@ -15,7 +15,10 @@ def download_chapter(chapter: ChapterInfo, destination_path: str):
     :param chapter: Valid ChapterInfo object
     :param destination_path: Path to the destination file where downloaded chapter will be stored
     """
+    logger = logging.getLogger()
+
     if path.isfile(destination_path):
+        logger.info(f"Chapter {chapter.file_name} is already downloaded. Skipping")
         return
     full_address = f"http://{ingest_config.GOPRO_IP}:{ingest_config.GOPRO_PORT}/videos/DCIM/{chapter.parent_directory}/{chapter.file_name}"
     wget.download(full_address, destination_path)
