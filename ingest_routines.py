@@ -7,7 +7,7 @@ from shutil import rmtree as rm_rf
 
 import ingest_config
 from file_management import VideoInfo, get_video_info_from_staging
-from http_connector import HttpClient, RequestFailedException
+from http_connector import HttpClient, RequestFailedException, RequestTimeoutException
 from video_downloader import download_video
 from video_processing import process_video
 
@@ -50,7 +50,7 @@ def download_videos():
             client.enable_beeping()
             sleep(5)
             client.disable_beeping()
-    except RequestFailedException:
+    except (RequestFailedException, RequestTimeoutException):
         return
 
     for video in videos:

@@ -11,6 +11,11 @@ class RequestFailedException(Exception):
         super().__init__(f"Request {response.request.url} returned {response}")
 
 
+class RequestTimeoutException(Exception):
+    def __init__(self):
+        super().__init__("Request timed out")
+
+
 @dataclass
 class GoProStatus:
     battery_available: bool
@@ -32,10 +37,15 @@ class HttpClient:
         :param api_command: API request string
         :return: JSON response if successful, exception is thrown otherwise
         """
-        response = requests.get(f"http://{ingest_config.GOPRO_IP}:{ingest_config.GOPRO_PORT}/{api_command}", timeout=2)
-        if response.status_code is not self.RESPONSE_OK:
-            raise RequestFailedException(response)
-        return response.json()
+        try:
+            response = requests.get(f"http://{ingest_config.GOPRO_IP}:{ingest_config.GOPRO_PORT}/{api_command}",
+                                    timeout=2)
+        except requests.exceptions.ConnectTimeout:
+            raise RequestTimeoutException()
+        else:
+            if response.status_code is not self.RESPONSE_OK:
+                raise RequestFailedException(response)
+            return response.json()
 
     def get_gopro_status(self) -> GoProStatus:
         """
