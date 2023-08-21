@@ -56,14 +56,14 @@ def download_videos():
     for video in videos:
         staging_path = f"{ingest_config.STAGING_DIR}/{video.video_number}"
         successful = download_video(video, staging_path)
-        if successful:
-            logger.debug(f"Removing video {video.video_number} from camera")
-            # client.delete_video(video)
-        else:
+        if not successful:
             logger.warning("Skipping video processing due to the download failure")
+        if ingest_config.ENABLE_CAMERA_VIDEO_REMOVAL:
+            logger.debug(f"Removing video {video.video_number} from camera")
+            client.delete_video(video)
 
     logger.info("Switching off camera")
-    # client.shutdown_camera()
+    client.shutdown_camera()
 
 
 def process_videos():
@@ -89,8 +89,8 @@ def remove_processed_videos(successfully_processed_videos: List[VideoInfo]):
     for video in successfully_processed_videos:
         staging_path = f"{ingest_config.STAGING_DIR}/{video.video_number}"
         logger.debug(f"Calling rm -rf on {staging_path}")
-        # TODO: uncomment that when ready
-        rm_rf(staging_path)
+        if ingest_config.ENABLE_PROCESSED_VIDEO_REMOVAL:
+            rm_rf(staging_path)
 
 
 def archive_video():
