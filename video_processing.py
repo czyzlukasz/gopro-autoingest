@@ -25,7 +25,7 @@ def prepare_input_file(input_files: List[str]) -> IO:
     :param input_files: List of absolute paths to videos to concatenate
     :return: File handle with instructions
     """
-    temp_file = open("input_data.txt", "w+")
+    temp_file = open(ingest_config.INPUT_FILE_PATH, "w+")
     temp_file.writelines([f"file \'{input_path}\'\n" for input_path in input_files])
     temp_file.close()
     return temp_file
