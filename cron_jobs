@@ -1,0 +1,2 @@
+* * * * * /usr/bin/flock -w 0 /var/ingest_download.lock /usr/local/bin/python3 /app/gopro_ingest.py download >> /var/log/cron.log 2>&1
+0 3 * * * /usr/bin/flock -w 0 /var/ingest_process.lock /usr/local/bin/python3 /app/gopro_ingest.py process >> /var/log/cron.log 2>&1
