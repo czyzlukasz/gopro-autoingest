@@ -55,6 +55,7 @@ def download_videos():
     except (RequestFailedException, RequestTimeoutException):
         return
 
+    logger.info(f"Found {len(videos)} videos that can be downloaded")
     for video in videos:
         staging_path = f"{ingest_config.STAGING_DIR}/{video.video_number}"
         successful = download_video(video, staging_path)
