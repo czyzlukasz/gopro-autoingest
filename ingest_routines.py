@@ -44,7 +44,7 @@ def download_videos():
 
     try:
         client.get_gopro_status()
-        videos = client.get_video_info()[1:3]
+        videos = client.get_video_info()
 
         if ingest_config.ENABLE_CONNECTION_CONFIRMATION_BEEP:
             client.enable_beeping()
