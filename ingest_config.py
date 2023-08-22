@@ -4,7 +4,7 @@ GOPRO_IP: str = getenv("GOPRO_IP", "10.5.5.9")
 GOPRO_PORT: int = int(getenv("GOPRO_PORT", 8080))
 LOWEST_DOWNLOAD_SPEED_MBYTES_PER_SECOND: float = int(getenv("LOWEST_DOWNLOAD_SPEED", 5))
 
-LOG_FILE: str = getenv("LOG_DIR", "/storage/logs")
+LOG_DIR: str = getenv("LOG_DIR", "/storage/logs")
 LOGGING_LEVEL: str = getenv("LOGGING_LEVEL", "DEBUG")
 
 STAGING_DIR: str = getenv("STAGING_DIR", "/storage/staging")
