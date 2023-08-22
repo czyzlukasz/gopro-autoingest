@@ -46,16 +46,16 @@ def get_output_file_name(video: VideoInfo, suffix="") -> str:
     return file_name
 
 
-def prepare_ffmpeg_spell(input_file_name: str, output_file: str) -> str:
+def prepare_ffmpeg_spell(input_file_name: str, output_file: str) -> List[str]:
     """
     Generate ready-to-execute spell
     :param input_file_name: File containing video file paths to concat
     :param output_file: Path where final video will be stored
     :return: Final spell
     """
-    return f"ffmpeg -safe 0 -f concat -i {input_file_name} " \
-           f"-map 0:v -map 0:a -map 0:3 -copy_unknown -tag:2 gpmd -c copy " \
-           f"\"{output_file}\""
+    return ["ffmpeg", "-safe", "0", "-f", "concat", "-i", input_file_name,
+            "-map", "0:v", "-map", "0:a", "-map", "0:3",
+            "-copy_unknown", "-tag:2", "gpmd", "-c", "copy", output_file]
 
 
 def process_video(download_path: str, video_info: VideoInfo) -> bool:
