@@ -39,7 +39,8 @@ Python script first lists all the videos available on the camera. Note that ever
 chapters (videos that are about 4GB in size due to FAT32 limitations). All chapters not in the staging area are
 sequentially downloaded. The staging area is simply a parking spot for all videos that are downloaded but not yet
 processed. Optionally, the downloaded videos are deleted from the camera. The deletion happens only after all chapters
-of given video have been successfully downloaded.
+of given video have been successfully downloaded. After all videos have been downloaded, the camera is put into sleep
+mode to conserve power consumption.
 
 ### Video processing
 
