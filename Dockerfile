@@ -18,4 +18,4 @@ RUN crontab cron_jobs
 RUN touch /var/log/cron.log
 
 # Run cron jobs and push logs to the stdout. This is useful when debugging
-CMD cron && tail -f /var/log/cron.log
+CMD printenv > /etc/environment && cron && tail -f /var/log/cron.log
