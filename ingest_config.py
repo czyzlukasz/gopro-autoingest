@@ -22,7 +22,7 @@ STORAGE_DIR: str = getenv("STORAGE_DIR", "/storage/videos")
 
 # Format of output file names. Note that this value should be valid in terms of the datetime.strftime function
 # Keep in mind that the limitation of the filesystem apply as well (e.g. no colons on Windows!)
-OUTPUT_VIDEO_NAME_FORMAT: str = getenv("OUTPUT_VIDEO_NAME", "%m.%d.%Y %H%M")
+OUTPUT_VIDEO_NAME_FORMAT: str = getenv("OUTPUT_VIDEO_NAME", "%d.%m.%Y %H%M")
 
 # Enable camera beeping when program successfully connects to the camera
 ENABLE_CONNECTION_CONFIRMATION_BEEP: bool = bool(getenv("ENABLE_CONNECTION_CONFIRMATION_BEEP", 1))
