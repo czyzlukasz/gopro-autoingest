@@ -18,7 +18,7 @@ def setup_logging():
     logger = logging.getLogger()
     handler = logging.FileHandler(
         f"{ingest_config.LOG_DIR}/{datetime.datetime.now().strftime(ingest_config.OUTPUT_VIDEO_NAME_FORMAT)}.log",
-        'w+')
+        'w+', delay=True)
 
     handler.setFormatter(logging.Formatter(fmt='%(asctime)s|%(levelname)s: %(message)s'))
     logger.addHandler(handler)

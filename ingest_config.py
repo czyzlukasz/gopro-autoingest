@@ -11,7 +11,7 @@ LOWEST_DOWNLOAD_SPEED_MBYTES_PER_SECOND: float = int(getenv("LOWEST_DOWNLOAD_SPE
 # Directory where all logs will be stored
 LOG_DIR: str = getenv("LOG_DIR", "/storage/logs")
 # Log level for logging library
-LOGGING_LEVEL: str = getenv("LOGGING_LEVEL", "DEBUG")
+LOGGING_LEVEL: str = getenv("LOGGING_LEVEL", "INFO")
 
 # Internal file used as an input for ffmpeg concat
 INPUT_FILE_PATH: str = getenv("INPUT_FILE_PATH", "/tmp/input_file.txt")
