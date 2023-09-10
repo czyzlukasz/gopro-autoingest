@@ -61,7 +61,7 @@ def download_videos():
         successful = download_video(video, staging_path)
         if not successful:
             logger.warning("Skipping video processing due to the download failure")
-        if ingest_config.ENABLE_CAMERA_VIDEO_REMOVAL:
+        elif ingest_config.ENABLE_CAMERA_VIDEO_REMOVAL:
             logger.debug(f"Removing video {video.video_number} from camera")
             client.delete_video(video)
 
